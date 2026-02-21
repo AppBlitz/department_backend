@@ -1,0 +1,23 @@
+// Package service
+package service
+
+import (
+	"github.com/AppBlitz/department_backend/internal/model"
+	"github.com/AppBlitz/department_backend/internal/repository"
+)
+
+type DepartmentService struct {
+	repos repository.DepartmentRepository
+}
+
+func NewDepartmentService(r repository.DepartmentRepository) *DepartmentService {
+	return &DepartmentService{repos: r}
+}
+
+func (departS *DepartmentService) SearchDepartmentID(id int64) (*model.Department, error) {
+	depart, err := departS.repos.FindByID(id)
+	if err != nil {
+		return nil, err
+	}
+	return depart, nil
+}
