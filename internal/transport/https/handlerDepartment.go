@@ -4,6 +4,7 @@ package https
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/AppBlitz/department_backend/internal/service"
 )
@@ -42,7 +43,11 @@ func (serviceDepart *DepartmentHandler) DepartmentID(w http.ResponseWriter, r *h
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method ", http.StatusMethodNotAllowed)
 	} else {
-		department, err := serviceDepart.ser.SearchDepartmentID(1234)
+		id, err := strconv.Atoi(r.PathValue("id"))
+		if err != nil {
+			http.Error(w, "The ID was not found", http.StatusBadRequest)
+		}
+		department, err := serviceDepart.ser.SearchDepartmentID(int64(id))
 		if err != nil {
 			http.Error(w, "", http.StatusInternalServerError)
 			return
@@ -55,7 +60,7 @@ func (serviceDepart *DepartmentHandler) DepartmentID(w http.ResponseWriter, r *h
 		w.WriteHeader(http.StatusOK)
 		_, err = w.Write(data)
 		if err != nil {
-			http.Error(w, "", http.StatusInternalServerError)
+			http.Error(w, "error creating response", http.StatusInternalServerError)
 			return
 		}
 	}
