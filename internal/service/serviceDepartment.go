@@ -21,3 +21,11 @@ func (departS *DepartmentService) SearchDepartmentID(id int64) (*model.Departmen
 	}
 	return depart, nil
 }
+
+func (departS *DepartmentService) FinAllDepartments() ([]*model.Department, error) {
+	departmens, err := departS.repos.FindAll()
+	if err != nil {
+		return nil, err
+	}
+	return departmens, nil
+}

@@ -3,6 +3,7 @@ package app
 
 import (
 	"database/sql"
+	"log"
 	"net/http"
 
 	"github.com/AppBlitz/department_backend/internal/repository"
@@ -16,6 +17,6 @@ func Run(db *sql.DB) {
 	trans := https.NewDepartmentHandler(servi)
 	erro := http.ListenAndServe("localhost:4567", https.AllHandlers(trans))
 	if erro != nil {
-		panic("Error with server")
+		log.Fatal("Erro in server: ", erro)
 	}
 }

@@ -2,6 +2,7 @@
 package https
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/AppBlitz/department_backend/internal/service"
@@ -40,5 +41,41 @@ func (serviceDepart *DepartmentHandler) Receiver(w http.ResponseWriter, r *http.
 func (serviceDepart *DepartmentHandler) DepartmentID(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method ", http.StatusMethodNotAllowed)
+	} else {
+		department, err := serviceDepart.ser.SearchDepartmentID(1234)
+		if err != nil {
+			http.Error(w, "", http.StatusInternalServerError)
+			return
+		}
+		data, err := json.Marshal(department)
+		if err != nil {
+			http.Error(w, "", http.StatusInternalServerError)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		_, err = w.Write(data)
+		if err != nil {
+			http.Error(w, "", http.StatusInternalServerError)
+			return
+		}
+	}
+}
+
+func (serviceDepart *DepartmentHandler) FindAllDepartments(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	} else {
+		departmens, _ := serviceDepart.ser.FinAllDepartments()
+		data, err := json.Marshal(departmens)
+		if err != nil {
+			http.Error(w, "Error internal server", http.StatusInternalServerError)
+			return
+		}
+		_, err = w.Write(data)
+		if err != nil {
+			http.Error(w, "Error internal server", http.StatusInternalServerError)
+			return
+		}
 	}
 }

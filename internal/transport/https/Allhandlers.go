@@ -7,6 +7,8 @@ import (
 func AllHandlers(han *DepartmentHandler) *http.ServeMux {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/save/departments/", han.SaveDepartments)
+	mux.HandleFunc("/department/save/", han.SaveDepartments)
+	mux.HandleFunc("/department/search/", han.DepartmentID)
+	mux.HandleFunc("/department/all/", han.FindAllDepartments)
 	return mux
 }
