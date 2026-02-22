@@ -76,7 +76,6 @@ func (serviceDepart *DepartmentHandler) FindAllDepartments(w http.ResponseWriter
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		_ = json.NewEncoder(w).Encode(ErrorResponse{Error: "Method not allowed"})
-		// http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	} else {
 		departmens, _ := serviceDepart.ser.FinAllDepartments()
