@@ -12,9 +12,9 @@ func configConnectionDatabaseMysql() *mysql.Config {
 	cfg := mysql.NewConfig()
 	cfg.User = os.Getenv("DBUSER")
 	cfg.Passwd = os.Getenv("DBPASS")
-	cfg.Net = "DBNET"
-	cfg.Addr = "DBADDR"
-	cfg.DBName = "DBNAME"
+	cfg.Net = "tcp"
+	cfg.Addr = "127.0.0.1"
+	cfg.DBName = "departments"
 	return cfg
 }
 

@@ -12,17 +12,20 @@ import (
 type DepartmentHandler struct {
 	ser *service.DepartmentService
 }
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
 
 func NewDepartmentHandler(s *service.DepartmentService) *DepartmentHandler {
 	return &DepartmentHandler{ser: s}
 }
 
 func (serviceDepart *DepartmentHandler) SaveDepartments(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method "+r.Method+" not allowed", http.StatusMethodNotAllowed)
+		http.Error(w, "Method  not allowed", http.StatusMethodNotAllowed)
 	} else {
 		w.WriteHeader(http.StatusCreated)
-		w.Header().Set("Content-Type", "application/json")
 		_, err := w.Write([]byte("Hello world"))
 		if err != nil {
 			http.Error(w, "Internal server error with response", http.StatusInternalServerError)
@@ -30,56 +33,60 @@ func (serviceDepart *DepartmentHandler) SaveDepartments(w http.ResponseWriter, r
 	}
 }
 
-func (serviceDepart *DepartmentHandler) Receiver(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "Method  not allowed", http.StatusMethodNotAllowed)
-	} else {
-		w.WriteHeader(http.StatusOK)
-		w.Header().Set("Content-Type", "application/json")
-	}
-}
-
 func (serviceDepart *DepartmentHandler) DepartmentID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	if r.Method != http.MethodGet {
-		http.Error(w, "Method ", http.StatusMethodNotAllowed)
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		_ = json.NewEncoder(w).Encode(ErrorResponse{Error: "Method not allowed"})
 	} else {
 		id, err := strconv.Atoi(r.PathValue("id"))
 		if err != nil {
-			http.Error(w, "The ID was not found", http.StatusBadRequest)
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(ErrorResponse{Error: "ID no valid"})
+			return
 		}
 		department, err := serviceDepart.ser.SearchDepartmentID(int64(id))
 		if err != nil {
-			http.Error(w, "", http.StatusInternalServerError)
+			w.WriteHeader(http.StatusInternalServerError)
+			_ = json.NewEncoder(w).Encode(ErrorResponse{Error: "Department not found"})
 			return
 		}
 		data, err := json.Marshal(department)
 		if err != nil {
-			http.Error(w, "", http.StatusInternalServerError)
+			w.WriteHeader(http.StatusInternalServerError)
+			_ = json.NewEncoder(w).Encode(ErrorResponse{Error: "Error internal server"})
 			return
 		}
 		w.WriteHeader(http.StatusOK)
 		_, err = w.Write(data)
 		if err != nil {
-			http.Error(w, "error creating response", http.StatusInternalServerError)
+			w.WriteHeader(http.StatusInternalServerError)
+			_ = json.NewEncoder(w).Encode(ErrorResponse{Error: "Error internal server"})
 			return
 		}
 	}
 }
 
 func (serviceDepart *DepartmentHandler) FindAllDepartments(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	if r.Method != http.MethodGet {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		_ = json.NewEncoder(w).Encode(ErrorResponse{Error: "Method not allowed"})
+		// http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	} else {
 		departmens, _ := serviceDepart.ser.FinAllDepartments()
 		data, err := json.Marshal(departmens)
 		if err != nil {
-			http.Error(w, "Error internal server", http.StatusInternalServerError)
+			w.WriteHeader(http.StatusInternalServerError)
+			_ = json.NewEncoder(w).Encode(ErrorResponse{Error: "Server error creating response"})
 			return
 		}
+		w.WriteHeader(http.StatusOK)
 		_, err = w.Write(data)
 		if err != nil {
-			http.Error(w, "Error internal server", http.StatusInternalServerError)
+			w.WriteHeader(http.StatusInternalServerError)
+			_ = json.NewEncoder(w).Encode(ErrorResponse{Error: "Server error creating response"})
 			return
 		}
 	}

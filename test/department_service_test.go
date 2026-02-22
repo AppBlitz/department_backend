@@ -17,3 +17,13 @@ func TestServiceGetIDdepartment(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestAllDepartments(t *testing.T) {
+	db, _ := mysqls.ConnectionDatabaseMysql()
+	repo := repository.NewDepartmentRepository(db)
+	servi := service.NewDepartmentService(repo)
+	_, err := servi.FinAllDepartments()
+	if err != nil {
+		t.Error(err)
+	}
+}

@@ -4,6 +4,7 @@ package repository
 import (
 	"database/sql"
 	"fmt"
+	"log"
 
 	"github.com/AppBlitz/department_backend/internal/model"
 )
@@ -34,7 +35,7 @@ func (r *mysqlDepartmentRepo) FindByID(id int64) (*model.Department, error) {
 	rows := r.db.QueryRow(query, id)
 	if err := rows.Scan(&department.ID, &department.Name, &department.Description); err != nil {
 		if err == sql.ErrNoRows {
-			return department, fmt.Errorf("%s %d", "Department not found with id", id)
+			return department, fmt.Errorf("%s %d %w", "Department not found with id", id, err)
 		}
 		return department, fmt.Errorf("department %d: %v", id, err)
 	}
@@ -45,16 +46,20 @@ func (r *mysqlDepartmentRepo) FindAll() ([]*model.Department, error) {
 	departments := []*model.Department{}
 	query := "select depart.id,depart.name,depart.description from departments depart"
 	rows, err := r.db.Query(query)
+	defer func() {
+		if err = rows.Close(); err != nil {
+			log.Print(err)
+		}
+	}()
 	for rows.Next() {
 		department := &model.Department{}
 		if err = rows.Scan(&department.ID, &department.Name, &department.Description); err != nil {
-			return nil, fmt.Errorf("%v", "erro in search departments")
+			return nil, fmt.Errorf("%s %w", "erro in search departments", err)
 		}
 		departments = append(departments, department)
 	}
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
 	return departments, nil
 }

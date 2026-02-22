@@ -10,7 +10,6 @@ import (
 func TestGetDepartmentID(t *testing.T) {
 	db, _ := mysqls.ConnectionDatabaseMysql()
 	repo := repository.NewDepartmentRepository(db)
-
 	_, err := repo.FindByID(1234)
 	if err != nil {
 		t.Error(err)

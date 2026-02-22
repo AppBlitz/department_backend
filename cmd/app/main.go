@@ -12,7 +12,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	} else {
-		// fmt.Print("Success conexion")
 		defer func() {
 			err := db.Close()
 			if err != nil {
