@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/AppBlitz/department_backend/configs"
 	"github.com/AppBlitz/department_backend/internal/service"
 )
 
@@ -21,6 +22,7 @@ func NewDepartmentHandler(s *service.DepartmentService) *DepartmentHandler {
 }
 
 func (serviceDepart *DepartmentHandler) SaveDepartments(w http.ResponseWriter, r *http.Request) {
+	configs.EnableCors(w)
 	w.Header().Set("Content-Type", "application/json")
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method  not allowed", http.StatusMethodNotAllowed)
@@ -34,6 +36,7 @@ func (serviceDepart *DepartmentHandler) SaveDepartments(w http.ResponseWriter, r
 }
 
 func (serviceDepart *DepartmentHandler) DepartmentID(w http.ResponseWriter, r *http.Request) {
+	configs.EnableCors(w)
 	w.Header().Set("Content-Type", "application/json")
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -68,6 +71,7 @@ func (serviceDepart *DepartmentHandler) DepartmentID(w http.ResponseWriter, r *h
 }
 
 func (serviceDepart *DepartmentHandler) FindAllDepartments(w http.ResponseWriter, r *http.Request) {
+	configs.EnableCors(w)
 	w.Header().Set("Content-Type", "application/json")
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
