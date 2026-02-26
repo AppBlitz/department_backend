@@ -20,7 +20,8 @@ func configConnectionDatabaseMysql() *mysql.Config {
 
 func configHandleDatabaseMysql() (sqls *sql.DB, err error) {
 	cfg := configConnectionDatabaseMysql()
-	sqls, err = sql.Open(os.Getenv("DBDATABASE"), cfg.FormatDSN())
+	database := os.Getenv("DATABASE")
+	sqls, err = sql.Open(database, cfg.FormatDSN())
 	if err != nil {
 		return nil, err
 	}
