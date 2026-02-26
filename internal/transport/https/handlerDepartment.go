@@ -49,7 +49,7 @@ func (serviceDepart *DepartmentHandler) SaveDepartments(w http.ResponseWriter, r
 			return
 		}
 		w.WriteHeader(http.StatusCreated)
-		_, erro = serviceDepart.service.SaveDepartment(departmentModel)
+		erro := serviceDepart.service.SaveDepartment(departmentModel)
 		if erro != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			_ = json.NewEncoder(w).Encode(ErrorResponse{Error: "Error save department"})
