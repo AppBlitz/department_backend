@@ -29,3 +29,11 @@ func (departS *DepartmentService) FinAllDepartments() ([]*model.Department, erro
 	}
 	return departmens, nil
 }
+
+func (departS *DepartmentService) SaveDepartment(department *model.Department) error {
+	erro := departS.repos.Save(department)
+	if erro != nil {
+		return erro
+	}
+	return nil
+}

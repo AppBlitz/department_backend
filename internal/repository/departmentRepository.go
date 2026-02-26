@@ -25,7 +25,7 @@ func NewDepartmentRepository(db *sql.DB) DepartmentRepository {
 
 func (r *mysqlDepartmentRepo) Save(dept *model.Department) error {
 	query := "INSERT INTO departments (id,name,description) VALUES (?,?,?)"
-	_, err := r.db.Exec(query, dept.ID, dept.Name, dept.Description)
+	_, err := r.db.Exec(query, &dept.ID, &dept.Name, &dept.Description)
 	return err
 }
 
