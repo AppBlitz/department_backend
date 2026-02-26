@@ -25,7 +25,7 @@ func NewDepartmentHandler(s *service.DepartmentService) *DepartmentHandler {
 }
 
 func (serviceDepart *DepartmentHandler) SaveDepartments(w http.ResponseWriter, r *http.Request) {
-	department_model := model.Department{}
+	departmentModel := &model.Department{}
 	defer func() {
 		if erro := r.Body.Close(); erro != nil {
 			log.Fatal(erro)
@@ -40,21 +40,25 @@ func (serviceDepart *DepartmentHandler) SaveDepartments(w http.ResponseWriter, r
 		if erro != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			_ = json.NewEncoder(w).Encode(ErrorResponse{Error: "Bad request"})
+			return
 		}
-		erro = json.Unmarshal(data, &department_model)
+		erro = json.Unmarshal(data, departmentModel)
 		if erro != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			_ = json.NewEncoder(w).Encode(ErrorResponse{Error: "Bad request"})
+			return
 		}
 		w.WriteHeader(http.StatusCreated)
-		_, erro = serviceDepart.service.SaveDepartment(&department_model)
+		_, erro = serviceDepart.service.SaveDepartment(departmentModel)
 		if erro != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			_ = json.NewEncoder(w).Encode(ErrorResponse{Error: "Error save department"})
+			return
 		}
 		_, err := w.Write([]byte("Department save success"))
 		if err != nil {
 			http.Error(w, "Internal server error with response", http.StatusInternalServerError)
+			return
 		}
 	}
 }
