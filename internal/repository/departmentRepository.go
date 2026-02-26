@@ -10,7 +10,7 @@ import (
 )
 
 type DepartmentRepository interface {
-	Save(department *model.Department) error
+	Save(department *model.Department) (int64, error)
 	FindByID(id int64) (*model.Department, error)
 	FindAll() ([]*model.Department, error)
 }
@@ -23,10 +23,17 @@ func NewDepartmentRepository(db *sql.DB) DepartmentRepository {
 	return &mysqlDepartmentRepo{db: db}
 }
 
-func (r *mysqlDepartmentRepo) Save(dept *model.Department) error {
+func (r *mysqlDepartmentRepo) Save(dept *model.Department) (int64, error) {
 	query := "INSERT INTO departments (id,name,description) VALUES (?,?,?)"
-	_, err := r.db.Exec(query, &dept.ID, &dept.Name, &dept.Description)
-	return err
+	result, err := r.db.Exec(query, &dept.ID, &dept.Name, &dept.Description)
+	if err != nil {
+		return -1, err
+	}
+	lastID, err := result.LastInsertId()
+	if err != nil {
+		return -1, err
+	}
+	return lastID, nil
 }
 
 func (r *mysqlDepartmentRepo) FindByID(id int64) (*model.Department, error) {
